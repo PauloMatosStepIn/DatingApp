@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+  //All the Users Controller needs authentication
+  [Authorize]
   public class UsersController : BaseApiController
   {
     private readonly DataContext _context;
@@ -19,23 +21,24 @@ namespace API.Controllers
       _context = context;
     }
 
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
+    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    {
 
-        var users = await _context.Users.ToListAsync();
+      var users = await _context.Users.ToListAsync();
 
-        return users;
+      return users;
     }
 
     // api/users/3
-    [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<AppUser>> GetUser(int id){
+    public async Task<ActionResult<AppUser>> GetUser(int id)
+    {
 
-        var user = await _context.Users.FindAsync(id);
+      var user = await _context.Users.FindAsync(id);
 
-        return user;
+      return user;
     }
   }
 }
