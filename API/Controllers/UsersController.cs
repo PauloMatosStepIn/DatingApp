@@ -9,6 +9,8 @@ using api.Extensions;
 using api.Interfaces;
 using API.Data;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -34,24 +36,25 @@ namespace API.Controllers
                             IPhotoService photoService)
     {
       _photoService = photoService;
-      // _context = context;
       _userRepository = userRepository;
       _mapper = mapper;
     }
 
-    //[AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
+      var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+      userParams.CurrentUsername = user.UserName;
 
-      // var users = await _context.Users.ToListAsync();
+      if (string.IsNullOrEmpty(userParams.Gender))
+        userParams.Gender = user.Gender == "male" ? "female" : "male";
 
-      // var users = await _userRepository.GetUsersAsync();
-      // var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
-      // return Ok(usersToReturn);
+      var users = await _userRepository.GetMembersAsync(userParams);
 
-      var members = await _userRepository.GetMembersAsync();
-      return Ok(members);
+      Response.AddPaginationHeader(users.CurrentPage, users.PageSize,
+      users.TotalCount, users.TotalPages);
+
+      return Ok(users);
 
     }
 
