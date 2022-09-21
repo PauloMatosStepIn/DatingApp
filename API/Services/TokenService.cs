@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using api.Interfaces;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,7 +17,9 @@ namespace api.Services
   {
     public readonly SymmetricSecurityKey _key;
 
-    public TokenService(IConfiguration config)
+    // public TokenService(IConfiguration config)
+    // Insert Roles in Token
+    public TokenService(IConfiguration config, UserManager<AppUser> userManager)
     {
       _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
     }
