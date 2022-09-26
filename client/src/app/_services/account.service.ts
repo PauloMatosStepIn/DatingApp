@@ -43,6 +43,12 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
+    user.roles = [];
+    // can be a single string of one role
+    // or an array of roles as strings
+    const roles = this.getDecodedToken(user.token).role;
+    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles);
+
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
@@ -52,4 +58,12 @@ export class AccountService {
     this.currentUserSource.next(null);
   }
 
+  getDecodedToken(token) {
+    // JSON Web Tokens consist of three parts separated by dots (.), 
+    // which are:    Header, Payload and Signature
+    // https://jwt.io/introduction
+
+    //return the Payload part of the Token
+    return JSON.parse(atob(token.split('.')[1]))
+  }
 }
