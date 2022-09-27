@@ -67,9 +67,14 @@ namespace API
       app.UseAuthentication();
       app.UseAuthorization();
 
+      //before publishing
+      app.UseDefaultFiles();
+      app.UseStaticFiles();
+
       app.UseEndpoints(endpoints =>
       {
         endpoints.MapControllers();
+        endpoints.MapFallbackToController("Index", "Fallback");
       });
     }
   }
